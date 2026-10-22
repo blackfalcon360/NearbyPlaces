@@ -488,4 +488,14 @@ public class MainActivity extends Activity implements Tracker.Listener {
         return g;
     }
 
-    void
+    @Override
+    public void onBackPressed() {
+        new AlertDialog.Builder(this)
+            .setTitle(tr("ایپ بند کریں؟", "Exit app?", "إغلاق التطبيق؟"))
+            .setMessage(tr("کیا آپ واقعی باہر نکلنا چاہتے ہیں؟", "Do you really want to exit?",
+                    "هل تريد الخروج فعلًا؟"))
+            .setPositiveButton(tr("ہاں", "Yes", "نعم"), (dlg, w) -> finish())
+            .setNegativeButton(tr("نہیں", "No", "لا"), null)
+            .show();
+    }
+}
