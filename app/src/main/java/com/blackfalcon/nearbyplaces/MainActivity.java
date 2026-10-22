@@ -488,6 +488,50 @@ public class MainActivity extends Activity implements Tracker.Listener {
         return g;
     }
 
+    void buildSettings() {
+        setBox.removeAllViews();
+        setBox.addView(label(tr("زبان", "Language", "اللغة")));
+        String l = st.lang();
+        rgLang = radios(new String[] {"اردو", "English", "العربية"},
+                l.equals("en") ? 1 : (l.equals("ar") ? 2 : 0), langIds);
+        setBox.addView(rgLang);
+
+        setBox.addView(label(tr("تھیم", "Theme", "المظهر")));
+        rgTheme = radios(new String[] {tr("ڈارک موڈ", "Dark mode", "الوضع الداكن"),
+            tr("لائٹ موڈ", "Light mode", "الوضع الفاتح")}, st.dark() ? 0 : 1, themeIds);
+        setBox.addView(rgTheme);
+
+        cbAuto = new CheckBox(this);
+        cbAuto.setText(tr("نئے علاقے میں انٹرنیٹ ہو تو خود مقامات محفوظ کریں",
+                "Auto-download places in a new area when online",
+                "تنزيل الأماكن تلقائيًا في منطقة جديدة عند توفر الإنترنت"));
+        cbAuto.setTextColor(cText);
+        cbAuto.setChecked(st.auto());
+        cbAuto.setPadding(0, dp(12), 0, 0);
+        setBox.addView(cbAuto);
+
+        setBox.addView(btn(tr("محفوظ کریں", "Save", "حفظ"), BLUE, v -> saveSettings()));
+
+        TextView info = tv(tr(
+            "آف لائن: ایپ میں پاکستان، افغانستان اور دنیا کے اہم شہروں کی بلٹ اِن فہرست ہے (تقریباً مقامات)۔ جب انٹرنیٹ ہو تو OpenStreetMap سے آس پاس کے شہر، قصبے اور گاؤں محفوظ ہو جاتے ہیں، پھر وہی بغیر انٹرنیٹ دکھتے ہیں۔ ڈاؤن لوڈ کے وقت آپ کا مقام OpenStreetMap کے سرور کو جاتا ہے؛ نہ چاہیں تو اوپر والا آپشن بند کریں۔\n\nکسی مقام پر ٹیپ کریں تو نقشے کی ایپس کی فہرست کھلتی ہے جس سے راستہ (Directions) کھول سکتے ہیں۔\n\nفاصلہ سیدھی لکیر میں ہے (راستے کا نہیں)۔ سمت کے لیے فون کا کمپاس استعمال ہوتا ہے؛ اسے ہوا میں آٹھ کے نشان میں گھما کر کیلیبریٹ کریں۔",
+            "Offline: the app has a built-in list of Pakistan, Afghanistan and major world cities (approximate positions). When online, nearby cities, towns and villages are saved from OpenStreetMap and then work without internet. While downloading, your position is sent to the OpenStreetMap server; turn the option above off if you do not want that.\n\nTap a place to get a list of maps apps and open directions in the one you choose.\n\nDistances are straight-line, not road distance. Direction uses the phone compass; calibrate it by moving the phone in a figure-eight.",
+            "دون إنترنت: يحتوي التطبيق على قائمة مدمجة لمدن باكستان وأفغانستان وأهم مدن العالم (مواقع تقريبية). عند توفر الإنترنت تُحفظ المدن والبلدات والقرى القريبة من OpenStreetMap وتعمل بعدها دون إنترنت. أثناء التنزيل يُرسل موقعك إلى خادم OpenStreetMap؛ أوقف الخيار أعلاه إن لم ترغب.\n\nاضغط على مكان لتظهر قائمة تطبيقات الخرائط وافتح الاتجاهات في التطبيق الذي تختاره.\n\nالمسافات بخط مستقيم لا بالطريق. الاتجاه يعتمد على بوصلة الهاتف؛ عايرها بتحريكه على شكل ٨."),
+            12, cSub, false);
+        info.setPadding(0, dp(18), 0, 0);
+        setBox.addView(info);
+    }
+
+    void saveSettings() {
+        String[] langs = {"ur", "en", "ar"};
+        int cur2 = rgLang.getCheckedRadioButtonId();
+        for (int i = 0; i < 3; i++) if (langIds[i] == cur2) st.setLang(langs[i]);
+        st.setDark(rgTheme.getCheckedRadioButtonId() == themeIds[0]);
+        st.setAuto(cbAuto.isChecked());
+        buildUI();
+        showTab(1);
+        Toast.makeText(this, tr("محفوظ ہو گیا", "Saved", "تم الحفظ"), Toast.LENGTH_SHORT).show();
+    }
+
     @Override
     public void onBackPressed() {
         new AlertDialog.Builder(this)
